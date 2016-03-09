@@ -9,7 +9,8 @@ class main{
     Scanner input = new Scanner(System.in);
     val = input.nextInt();
 
+    String result = intToStringLiteral.stringBuilder(util.breakDownInt(val));
 
-    System.out.println("Size of int: " + util.getIntSize(val) );
+    System.out.println(result);
   }
 }
