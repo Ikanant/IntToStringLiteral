@@ -5,43 +5,45 @@ class intToStringLiteral{
   public static String stringBuilder(Stack<Integer> resultStack){
     StringBuilder sbuild = new StringBuilder();
 
-    if(resultStack.size()==2){
+    int size = resultStack.size()-1; // Ignore sign integer
+    if(size==1){
         sbuild.append(convertToLiteral(resultStack.pop()));
     }
     else{
-      int iterator = 1;
-      boolean tensFlag = false;
-
-      int val;
-      int temp = -1;
-      while(resultStack.size() != 1){
-        val = resultStack.pop();
-
-        if(resultStack.size()-1 == 2 || resultStack.size()-1 == 5)
-          tensFlag = true;
-
-        if(val != 0){
-          if(tensFlag){
-            temp = val;
-          }
-          else{
-            if(temp != -1){
-                sbuild.append(convertToLiteral(val + temp));
-            }
-            else {
-              sbuild.append(convertToLiteral(val));
-            }
-          }
-
+        int possibleDec = 2; // Scalable
+        while (possibleDec+3 <= size){
+          possibleDec += 3;
         }
 
-        if(val!=0 && (resultStack.size() == 3 || resultStack.size() == 6))
-          sbuild.append(" hundred ");
-        else if(resultStack.size() == 4)
-          sbuild.append(" thousand ");
+        int conductor = size;
+        int element;
 
-        iterator++;
-      }
+        while (resultStack.size() > 1){
+          element = resultStack.pop();
+          if(element!=0){
+            if (conductor == possibleDec && element==1){
+              sbuild.append(convertToLiteral(resultStack.pop() + 10) + " ");
+              possibleDec -= 3;
+              conductor --;
+            }
+            else if(conductor == possibleDec && element!=1){
+              sbuild.append(convertToLiteral(element*10) + " ");
+              possibleDec -= 3;
+            }
+            else {
+              sbuild.append(convertToLiteral(element) + " ");
+              if(conductor-1 == possibleDec){
+                sbuild.append("hundred ");
+              }
+            }
+          }
+
+          if(conductor == 4){
+            sbuild.append("thousand ");
+          }
+
+          conductor--;
+        }
     }
 
     if(resultStack.pop() < 0){
