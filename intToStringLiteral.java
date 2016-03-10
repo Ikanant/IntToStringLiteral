@@ -23,12 +23,10 @@ class intToStringLiteral{
           if(element!=0){
             if (conductor == possibleDec && element==1){
               sbuild.append(convertToLiteral(resultStack.pop() + 10) + " ");
-              possibleDec -= 3;
               conductor --;
             }
             else if(conductor == possibleDec && element!=1){
               sbuild.append(convertToLiteral(element*10) + " ");
-              possibleDec -= 3;
             }
             else {
               sbuild.append(convertToLiteral(element) + " ");
@@ -40,6 +38,9 @@ class intToStringLiteral{
 
           if(conductor == 4){
             sbuild.append("thousand ");
+          }
+          else if(conductor == possibleDec){
+            possibleDec -= 3;
           }
 
           conductor--;
