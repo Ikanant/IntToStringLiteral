@@ -5,7 +5,7 @@ Output: String representation of the value
 Time Frame: Your discretion: please let me know how long you would like to complete this exercise and when you plan to start.
 Notes: For java development Eclipse is a free (and good) IDE.
 
-Examples: 
+Examples:
 java -jar ConvertNumber 100 --> one hundred
 java -jar ConvertNumber 0 --> zero
 java -jar ConvertNumber 1001 --> one thousand one
