@@ -1,25 +1,51 @@
-import java.util.Queue;
+import java.util.Stack;
 
 class intToStringLiteral{
 
-  public static String stringBuilder(Queue<Integer> resultPackage){
+  public static String stringBuilder(Stack<Integer> resultStack){
     StringBuilder sbuild = new StringBuilder();
 
-    if(resultPackage.poll() < 0){
-      sbuild.append("negative ");
+    if(resultStack.size()==2){
+        sbuild.append(convertToLiteral(resultStack.pop()));
+    }
+    else{
+      int iterator = 1;
+      boolean tensFlag = false;
+
+      int val;
+      int temp = -1;
+      while(resultStack.size() != 1){
+        val = resultStack.pop();
+
+        if(resultStack.size()-1 == 2 || resultStack.size()-1 == 5)
+          tensFlag = true;
+
+        if(val != 0){
+          if(tensFlag){
+            temp = val;
+          }
+          else{
+            if(temp != -1){
+                sbuild.append(convertToLiteral(val + temp));
+            }
+            else {
+              sbuild.append(convertToLiteral(val));
+            }
+          }
+
+        }
+
+        if(val!=0 && (resultStack.size() == 3 || resultStack.size() == 6))
+          sbuild.append(" hundred ");
+        else if(resultStack.size() == 4)
+          sbuild.append(" thousand ");
+
+        iterator++;
+      }
     }
 
-    int iterator = 1;
-    int tenthDecimal = 2;
-    for(int i: resultPackage){
-      if(iterator != tenthDecimal){
-        System.out.println("--> " + convertToLiteral(i));
-      }
-      else{
-        System.out.println("--> " + convertToLiteral(i*10));
-        tenthDecimal += 3;
-      }
-      iterator++;
+    if(resultStack.pop() < 0){
+      sbuild.insert(0, "negative ");
     }
 
     return sbuild.toString();

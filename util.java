@@ -1,5 +1,4 @@
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.Stack;
 
 class util{
 
@@ -9,23 +8,28 @@ class util{
   The second element will be the SIZE (or length) of the int. Example: 42 = 2
   The rest of the elements will be the int values broken down
   */
-  public static Queue<Integer> breakDownInt(int input){
-      // resultPackage will contain Sign, Size and int values from input i
-      Queue<Integer> resultPackage = new LinkedList<Integer>();
+  public static Stack<Integer> breakDownInt(int input){
+      // resultStack will contain Sign, Size and int values from input i
+      Stack<Integer> resultStack = new Stack<Integer>();
 
       if(input<0){
-        resultPackage.add(-1);
+        resultStack.push(-1);
         input = input*(-1);
       } else {
-        resultPackage.add(1);
+        resultStack.push(1);
       }
 
-      while(input>=1){
-        resultPackage.add(input%10);
-        input /= 10;
+      if(input < 10){
+        resultStack.push(input);
+      }
+      else {
+        while(input>=1){
+          resultStack.push(input%10);
+          input /= 10;
+        }
       }
 
-      return resultPackage;
+      return resultStack;
     }
 
 }
