@@ -1,101 +1,88 @@
 import java.util.Stack;
 
 class Util{
-
-  /*
-  This method will return an int array.
-  The first element will be 1 or -1 that will help the program determine the sign of the int
-  The second element will be the SIZE (or length) of the int. Example: 42 = 2
-  The rest of the elements will be the int values broken down
-  */
-
-  public static int stringToInt(String inputString){
-
-    boolean negativeFlag = false;
-    int asciiVal = 0;
-    int decimalPoint = toThePowerOf( inputString.length() );
-    int resultInt = 0;
-
-     int resultingInt = 0;
-    for(int i=0; i<inputString.length(); i++){
-      asciiVal = inputString.charAt(i);
-
-      if (asciiVal == 45 && resultingInt == 0){
-        negativeFlag = true;
-      }
-      else if(asciiVal >= 48 && asciiVal <= 57){
-        resultInt += (asciiVal-48) * decimalPoint;
-      }
-      decimalPoint /= 10;
-    }
-
-    return negativeFlag ? resultInt * (-1) : resultInt;
-  }
-
-  public static Stack<Integer> breakDownInt(int input){
-      // resultStack will contain Sign, Size and int values from input i
+  public static Stack<Integer> stringToIntegerStack(String inputString){
     Stack<Integer> resultStack = new Stack<Integer>();
 
-    if(input<0){
-      resultStack.push(-1);
-      input = input*(-1);
-    } else {
-      resultStack.push(1);
-    }
+    int asciiVal = 0;
+    int stringLength = inputString.length();
 
-    if(input < 10){
-      resultStack.push(input);
-    }
-    else {
-      while(input>=1){
-        resultStack.push(input%10);
-        input /= 10;
+    // Check all characters are valid numbers && push them to our Stack
+    for(int i=stringLength-1; i>=0; i--){
+      asciiVal = inputString.charAt(i);
+
+      if( asciiVal >= 48 && asciiVal <= 57 ){
+        resultStack.push(asciiVal-48);
+      }
+      else if(asciiVal == 45 && i == 0){
+        resultStack.push(-1);
+      }
+      else {
+        return null; // Invalid character entered
       }
     }
-
     return resultStack;
   }
 
+  //----------------------------------------------------------------------------
 
-
-  public static String stringBuilder(Stack<Integer> resultStack){
+  public static String numberLiteralConverter(Stack<Integer> resultStack){
     StringBuilder sbuild = new StringBuilder();
 
-    int size = resultStack.size()-1; // Ignore sign integer
+    // Check if the given number is negative
+    if(resultStack.peek() == -1){
+      sbuild.append("negative ");
+      resultStack.pop();
+    }
+
+    // If size == 1 we will handle "zeroes"
+    int size = resultStack.size();
     if(size==1){
-        sbuild.append(convertToLiteral(resultStack.pop()));
+        sbuild.append(getNumberToLiteral(resultStack.pop()));
     }
     else{
-        int possibleDec = 2; // Scalable
-        while (possibleDec+3 <= size){
+        // possibleDec (Possible Decimal) will flag how to handle numbers between 10 - 19
+        // We add 3 in case the number has more than 5 digits since we will deal with two decimals
+        int possibleDec = 2;
+        if (possibleDec+3 <= size){
           possibleDec += 3;
         }
 
+        // I will use the conductor flag to point which single digit inside our number we are dealing with
         int conductor = size;
         int element;
-
-        while (resultStack.size() > 1){
+        boolean possibleDecFlag = false;
+        while (resultStack.size() > 0){
           element = resultStack.pop();
           if(element!=0){
+            // Deal with numbers: 10 - 19
             if (conductor == possibleDec && element==1){
-              sbuild.append(convertToLiteral(resultStack.pop() + 10) + " ");
-              conductor --;
+              sbuild.append(getNumberToLiteral(resultStack.pop() + 10));
+              conductor--;
+              possibleDecFlag = true;
             }
+            // Deal with numbers: 20, 30, ..., 90
             else if(conductor == possibleDec && element!=1){
-              sbuild.append(convertToLiteral(element*10) + " ");
+              sbuild.append(getNumberToLiteral(element*10));
             }
+            // Deal with single digiits
             else {
-              sbuild.append(convertToLiteral(element) + " ");
+              sbuild.append(getNumberToLiteral(element));
+
               if(conductor == 3 || conductor == 6){
-                sbuild.append("hundred ");
+                sbuild.append(" hundred");
               }
             }
+
+            // Add space after appending (except for last digit)
+            if (conductor!=1)
+              sbuild.append(" ");
           }
 
           if(conductor == 4){
             sbuild.append("thousand ");
           }
-          else if(conductor == possibleDec){
+          else if(conductor == possibleDec || possibleDecFlag){
             possibleDec -= 3;
           }
 
@@ -103,14 +90,14 @@ class Util{
         }
     }
 
-    if(resultStack.pop() < 0){
-      sbuild.insert(0, "negative ");
-    }
-
+    // return built String
     return sbuild.toString();
   }
 
-  private static String convertToLiteral(int input){
+  //----------------------------------------------------------------------------
+
+  // Simple translator from Int to String
+  private static String getNumberToLiteral(int input){
     switch(input){
       case 0:
         return "zero";
@@ -171,14 +158,5 @@ class Util{
       default:
         return null;
     }
-  }
-
-  private static int toThePowerOf(int exponent){
-    int powerValue = 1;
-    while(exponent>1){
-      powerValue *= 10;
-      exponent--;
-    }
-    return powerValue;
   }
 }
